@@ -9,7 +9,8 @@
 
 <body>
     <h1>Enter your text here</h1>
-    <form action="analyze/" method="get">
+    <form action="analyze/" method="post">
+        {% csrf_token %}
         <textarea name="text" style="height: 200px; width: 1000px;"></textarea>
         <br><br><br><br>
         <input type="checkbox" name="remPunc">Remove Punctuation <br><br>
