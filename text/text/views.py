@@ -7,11 +7,11 @@ def home(request):
 
 
 def analyze(request):
-    txt = request.GET.get('text', 'default')
-    is_punc = request.GET.get('remPunc', 'off')
-    is_fullCaps = request.GET.get('fullCaps', 'off')
-    is_extraspace = request.GET.get('remSpace', 'off')
-    is_remLine = request.GET.get('remLine', 'off')
+    txt = request.POST.get('text', 'default')
+    is_punc = request.POST.get('remPunc', 'off')
+    is_fullCaps = request.POST.get('fullCaps', 'off')
+    is_extraspace = request.POST.get('remSpace', 'off')
+    is_remLine = request.POST.get('remLine', 'off')
 
     if is_punc == 'on':
         punc = '''!()-[]{};:'"\,<>./?@#$%^&*_~'''
@@ -21,33 +21,34 @@ def analyze(request):
                 analyzed = analyzed + i
 
         params = {'purpose': 'Removed Punctuations', 'analyzed_text': analyzed}
-        return render(request, 'analyze.html', params)
+        txt = analyzed
 
-    elif is_fullCaps == 'on':
+    if is_fullCaps == 'on':
         analyzed = ""
         for i in txt:
             analyzed = analyzed + i.upper()
 
         params = {'purpose': 'Capitalized letters', 'analyzed_text': analyzed}
-        return render(request, 'analyze.html', params)
+        txt = analyzed
 
-    elif is_extraspace == "on":
+    if is_extraspace == "on":
         analyzed = ""
         for index, char in enumerate(txt):
             if not(txt[index] == " " and txt[index+1] == " "):
                 analyzed = analyzed + char
 
         params = {'purpose': 'Removed Extra spaces', 'analyzed_text': analyzed}
-        return render(request, 'analyze.html', params)
+        txt = analyzed
 
-    elif is_remLine == 'on':
+    if is_remLine == 'on':
         analyzed = ""
         for i in txt:
             if i != '\n' and i != "\r":
                 analyzed = analyzed + i
 
         params = {'purpose': 'Removed blank lines', 'analyzed_text': analyzed}
-        return render(request, 'analyze.html', params)
 
-    else:
-        return HttpResponse('<h1>Please tick any checkbox</h1>')
+    if(is_punc != "on" and is_fullCaps != "on" and is_extraspace != "on" and is_remLine != "on"):
+        return HttpResponse("please select any operation and try again")
+
+    return render(request, 'analyze.html', params)
